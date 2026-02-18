@@ -5,7 +5,7 @@ function renderSingleItem(pokemon) {
 
     const card = document.createElement("div");
     card.classList.add("card");
-    card.innerHTML = "";
+    card.innerHTML = ""; // Add space
 
     const h2 = document.createElement('h2');
     h2.textContent = pokemon.name;
