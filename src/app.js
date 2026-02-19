@@ -19,6 +19,7 @@ function renderSingleItem(pokemon) {
 
     const weightP = document.createElement('p');
     weightP.textContent = "Weight: " + pokemon.weight
+
     card.appendChild(h2);
     card.appendChild(img);
     card.appendChild(heightP);
@@ -26,3 +27,35 @@ function renderSingleItem(pokemon) {
 
     container.appendChild(card);
 }
+
+function renderPokemonList(pokemonArray) {
+    const pokemonList = document.querySelector("#pokemon-list");
+    pokemonList.innerHTML = "";
+
+    pokemonArray.forEach((pokemon) => {
+        const li = document.createElement("li");
+        li.classList.add("pokemon-item");
+        li.dataset.id = pokemon.id;
+        li.textContent = pokemon.name;
+
+        pokemonList.appendChild(li);
+    });
+}
+
+const pokemonList = document.querySelector("#pokemon-list");
+
+pokemonList.addEventListener("click", async (event) => {
+    const clickedItem = event.target.closest(".pokemon-item");
+    if (!clickedItem) return;
+
+    const id = clickedItem.dataset.id;
+
+    const result = await getPokemonById(id);
+
+    if (result.error) {
+        console.warn(result.error);
+        return;
+    }
+
+    renderSingleItem(result.data);
+});
