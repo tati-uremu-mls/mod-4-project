@@ -1,4 +1,5 @@
 function renderSingleItem(pokemon) {
+    console.log('render single item')
     const container = document.getElementById("single-item-container");
 
     container.innerHTML = "";

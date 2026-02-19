@@ -1,4 +1,5 @@
 export const getPokemonById = async (id) => {
+    console.log('fetch happening')
     try {
         const response = await fetch(
             `https://pokeapi.co/api/v2/pokemon/${id}`
