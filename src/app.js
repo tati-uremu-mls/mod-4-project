@@ -1,3 +1,4 @@
+import { getAllPokemon, getPokemonById } from "./api.js";
 function renderSingleItem(pokemon) {
     console.log('render single item')
     const container = document.getElementById("single-item-container");
@@ -37,7 +38,7 @@ function renderPokemonList(pokemonArray) {
         const li = document.createElement("li");
         li.classList.add("pokemon-item");
         li.dataset.id = pokemon.id;
-        li.textContent = pokemon.name;
+        li.textContent = `#${pokemon.id} - ${pokemon.name}`;
 
         pokemonList.appendChild(li);
     });
@@ -59,4 +60,19 @@ pokemonList.addEventListener("click", async (event) => {
     }
 
     renderSingleItem(result.data);
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const result = await getAllPokemon();
+
+        if (result.error) {
+            console.warn(result.error);
+            return;
+        }
+
+        renderPokemonList(result.data);
+    } catch (error) {
+        console.error("Error fetching Pokémon:", error);
+    }
 });
