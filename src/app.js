@@ -79,5 +79,5 @@ form.addEventListener("submit", (event) => {
 
     console.log(formData); // For now, just log it
 
-    form.reset(); // Clear the form
+    form.reset(); //Clear the form
 });

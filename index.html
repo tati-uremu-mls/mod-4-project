@@ -7,24 +7,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>mod-4-project</title>
 </head>
+<main>
 
-<body>
+  <body>
+    <form id="pokemon-form">
+      <input type="text" id="pokemon-name" placeholder="Pokemon name" />
+      <input type="number" id="pokemon-level" placeholder="Level" />
+      <button type="submit">Add Pokemon</button> /* Need a button in order to do a submit listener /*
+    </form>
+    <section id="single-item-section">
+      <h2>Selected Item</h2>
+      <div id="single-item-container">
+        <p>Select an item to see details.</p>
+      </div>
+    </section>
 
-  <form id="pokemon-form">
-    <input type="text" id="pokemon-name" placeholder="Pokemon name" />
-    <input type="number" id="pokemon-level" placeholder="Level" />
-    <button type="submit">Add Pokemon</button> /* Need a button in order to do a submit listener /*
-  </form>
-  <section id="single-item-section">
-    <h2>Selected Item</h2>
-    <div id="single-item-container">
-      <p>Select an item to see details.</p>
-    </div>
-  </section>
-
-  <ul id="pokemon-list"></ul>
-  <div id="app"></div>
-  <script type="module" src="/src/app.js"></script>
-</body>
+    <ul id="pokemon-list"></ul>
+    <div id="app"></div>
+    <script type="module" src="/src/app.js"></script>
+  </body>
+</main>
 
 </html>
