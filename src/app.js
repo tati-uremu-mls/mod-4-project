@@ -60,3 +60,24 @@ pokemonList.addEventListener("click", async (event) => {
 
     renderSingleItem(result.data);
 });
+
+const form = document.getElementById("pokemon-form");
+
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const nameInput = document.getElementById("pokemon-name");
+    const levelInput = document.getElementById("pokemon-level");
+
+    const name = nameInput.value;
+    const level = levelInput.value;
+
+    const formData = {
+        name,
+        level,
+    };
+
+    console.log(formData); // For now, just log it
+
+    form.reset(); // Clear the form
+});
