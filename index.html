@@ -3,18 +3,22 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mod-4-project</title>
+  <title>Pokémon App</title>
 </head>
-<main>
 
-  <body>
+<body>
+
+  <main>
+
+    <h1>Pokémon Explorer</h1>
+
     <form id="pokemon-form">
       <input type="text" id="pokemon-name" placeholder="Pokemon name" />
       <input type="number" id="pokemon-level" placeholder="Level" />
-      <button type="submit">Add Pokemon</button> /* Need a button in order to do a submit listener /*
+      <button type="submit">Add Pokemon</button>
     </form>
+
     <section id="single-item-section">
       <h2>Selected Item</h2>
       <div id="single-item-container">
@@ -22,32 +26,22 @@
       </div>
     </section>
 
-<<<<<<< HEAD
-    <ul id="pokemon-list"></ul>
-    <div id="app"></div>
-    <script type="module" src="/src/app.js"></script>
-  </body>
-</main>
-=======
-  <section id="single-item-section">
-    <h2>Selected Item</h2>
-    <div id="single-item-container">
-      <p>Select an item to see details.</p>
-    </div>
-  </section>
+    <section id="collection">
+      <h2>Collection</h2>
+      <ul id="collection-list">
+        <!-- JavaScript will populate this list -->
+      </ul>
+    </section>
 
-  <section id="collection">
-    <h2>Collection</h2>
-    <ul id="collection-list">
-      <!-- JavaScript will populate this list -->
-    </ul>
-  </section>
+    <section>
+      <h2>All Pokémon</h2>
+      <ul id="pokemon-list"></ul>
+    </section>
 
+  </main>
 
-  <ul id="pokemon-list"></ul>
-  <div id="app"></div>
-  <script type="module" src="/src/main.js"></script>
+  <script type="module" src="/src/app.js"></script>
+
 </body>
->>>>>>> main
 
 </html>

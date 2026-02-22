@@ -1,4 +1,33 @@
-import { getAllPokemon, getPokemonById } from "./api.js";
+
+export const getAllPokemon = () => {
+    return fetch('https://pokeapi.co/api/v2/pokemon?limit=100')
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Fetch failed. ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+
+            const formattedPokemon = data.results.map((pokemon) => {
+                const urlParts = pokemon.url.split("/");
+                const id = urlParts[urlParts.length - 2];
+
+                return {
+                    name: pokemon.name,
+                    id: id
+                };
+            });
+
+            return { data: formattedPokemon, error: null };
+        })
+        .catch((error) => {
+            return { data: null, error };
+        });
+};
+
+
+
 function renderSingleItem(pokemon) {
     console.log('render single item')
     const container = document.getElementById("single-item-container");
@@ -62,7 +91,6 @@ pokemonList.addEventListener("click", async (event) => {
     renderSingleItem(result.data);
 });
 
-<<<<<<< HEAD
 const form = document.getElementById("pokemon-form");
 
 form.addEventListener("submit", (event) => {
@@ -83,7 +111,7 @@ form.addEventListener("submit", (event) => {
 
     form.reset(); //Clear the form
 });
-=======
+
 document.addEventListener("DOMContentLoaded", async () => {
     try {
         const result = await getAllPokemon();
@@ -98,4 +126,3 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Error fetching Pokémon:", error);
     }
 });
->>>>>>> main
