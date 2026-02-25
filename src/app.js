@@ -1,4 +1,45 @@
 import { getAllPokemon, getPokemonById } from "./api.js";
+
+// ===== localStorage helpers (Favorites) =====
+const FAVORITES_KEY = "pokemonFavorites";
+
+function safeJsonParse(value, fallback) {
+    try {
+        return value ? JSON.parse(value) : fallback;
+    } catch {
+        return fallback;
+    }
+}
+
+function readFavorites() {
+    // Always returns an array of ids (strings)
+    const raw = localStorage.getItem(FAVORITES_KEY);
+    const parsed = safeJsonParse(raw, []);
+    return Array.isArray(parsed) ? parsed : [];
+}
+
+function writeFavorites(favs) {
+    // Only store an array
+    const safe = Array.isArray(favs) ? favs : [];
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(safe));
+}
+
+function isFavorite(id) {
+    const favs = readFavorites();
+    return favs.includes(String(id));
+}
+
+function toggleFavorite(id) {
+    const strId = String(id);
+    const favs = readFavorites();
+
+    const next = favs.includes(strId)
+        ? favs.filter((x) => x !== strId)
+        : [...favs, strId];
+
+    writeFavorites(next);
+    return next;
+}
 function renderSingleItem(pokemon) {
     console.log('render single item')
     const container = document.getElementById("single-item-container");
@@ -38,7 +79,27 @@ function renderPokemonList(pokemonArray) {
         const li = document.createElement("li");
         li.classList.add("pokemon-item");
         li.dataset.id = pokemon.id;
-        li.textContent = `#${pokemon.id} - ${pokemon.name}`;
+
+        // Text that helps identify the item
+        const label = document.createElement("span");
+        label.textContent = `#${pokemon.id} - ${pokemon.name}`;
+
+        // Favorite toggle button
+        const favBtn = document.createElement("button");
+        favBtn.type = "button";
+        favBtn.classList.add("fav-btn");
+        favBtn.dataset.id = pokemon.id;
+
+        // Show filled star if favorite
+        const fav = isFavorite(pokemon.id);
+        favBtn.textContent = fav ? "⭐" : "☆";
+        favBtn.setAttribute(
+            "aria-label",
+            fav ? "Remove from favorites" : "Add to favorites"
+        );
+
+        li.appendChild(label);
+        li.appendChild(favBtn);
 
         pokemonList.appendChild(li);
     });
@@ -46,7 +107,26 @@ function renderPokemonList(pokemonArray) {
 
 const pokemonList = document.querySelector("#pokemon-list");
 
-pokemonList.addEventListener("click", async (event) => {
+pokemonList?.addEventListener("click", async (event) => {
+    // If the star button was clicked, toggle favorite
+    const favBtn = event.target.closest(".fav-btn");
+    if (favBtn) {
+        event.stopPropagation();
+
+        const id = favBtn.dataset.id;
+        toggleFavorite(id);
+
+        const fav = isFavorite(id);
+        favBtn.textContent = fav ? "⭐" : "☆";
+        favBtn.setAttribute(
+            "aria-label",
+            fav ? "Remove from favorites" : "Add to favorites"
+        );
+
+        return;
+    }
+
+    // Otherwise, treat as a normal list item click -> fetch details
     const clickedItem = event.target.closest(".pokemon-item");
     if (!clickedItem) return;
 
@@ -65,6 +145,11 @@ pokemonList.addEventListener("click", async (event) => {
 document.addEventListener("DOMContentLoaded", async () => {
     try {
         const result = await getAllPokemon();
+
+        if (!result || !result.data) {
+            console.warn("No Pokémon data returned");
+            return;
+        }
 
         if (result.error) {
             console.warn(result.error);
