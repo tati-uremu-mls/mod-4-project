@@ -38,27 +38,7 @@ function renderPokemonList(pokemonArray) {
         const li = document.createElement("li");
         li.classList.add("pokemon-item");
         li.dataset.id = pokemon.id;
-
-        // Text that helps identify the item
-        const label = document.createElement("span");
-        label.textContent = `#${pokemon.id} - ${pokemon.name}`;
-
-        // Favorite toggle button
-        const favBtn = document.createElement("button");
-        favBtn.type = "button";
-        favBtn.classList.add("fav-btn");
-        favBtn.dataset.id = pokemon.id;
-
-        // Show filled star if favorite
-        const fav = isFavorite(pokemon.id);
-        favBtn.textContent = fav ? "⭐" : "☆";
-        favBtn.setAttribute(
-            "aria-label",
-            fav ? "Remove from favorites" : "Add to favorites"
-        );
-
-        li.appendChild(label);
-        li.appendChild(favBtn);
+        li.textContent = `#${pokemon.id} - ${pokemon.name}`;
 
         pokemonList.appendChild(li);
     });
@@ -66,26 +46,7 @@ function renderPokemonList(pokemonArray) {
 
 const pokemonList = document.querySelector("#pokemon-list");
 
-pokemonList?.addEventListener("click", async (event) => {
-    // If the star button was clicked, toggle favorite
-    const favBtn = event.target.closest(".fav-btn");
-    if (favBtn) {
-        event.stopPropagation();
-
-        const id = favBtn.dataset.id;
-        toggleFavorite(id);
-
-        const fav = isFavorite(id);
-        favBtn.textContent = fav ? "⭐" : "☆";
-        favBtn.setAttribute(
-            "aria-label",
-            fav ? "Remove from favorites" : "Add to favorites"
-        );
-
-        return;
-    }
-
-    // Otherwise, treat as a normal list item click -> fetch details
+pokemonList.addEventListener("click", async (event) => {
     const clickedItem = event.target.closest(".pokemon-item");
     if (!clickedItem) return;
 
@@ -104,11 +65,6 @@ pokemonList?.addEventListener("click", async (event) => {
 document.addEventListener("DOMContentLoaded", async () => {
     try {
         const result = await getAllPokemon();
-
-        if (!result || !result.data) {
-            console.warn("No Pokémon data returned");
-            return;
-        }
 
         if (result.error) {
             console.warn(result.error);
