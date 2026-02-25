@@ -1,45 +1,33 @@
-import { getAllPokemon, getPokemonById } from "./api.js";
 
-// ===== localStorage helpers (Favorites) =====
-const FAVORITES_KEY = "pokemonFavorites";
+export const getAllPokemon = () => {
+    return fetch('https://pokeapi.co/api/v2/pokemon?limit=100')
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Fetch failed. ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
 
-function safeJsonParse(value, fallback) {
-    try {
-        return value ? JSON.parse(value) : fallback;
-    } catch {
-        return fallback;
-    }
-}
+            const formattedPokemon = data.results.map((pokemon) => {
+                const urlParts = pokemon.url.split("/");
+                const id = urlParts[urlParts.length - 2];
 
-function readFavorites() {
-    // Always returns an array of ids (strings)
-    const raw = localStorage.getItem(FAVORITES_KEY);
-    const parsed = safeJsonParse(raw, []);
-    return Array.isArray(parsed) ? parsed : [];
-}
+                return {
+                    name: pokemon.name,
+                    id: id
+                };
+            });
 
-function writeFavorites(favs) {
-    // Only store an array
-    const safe = Array.isArray(favs) ? favs : [];
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(safe));
-}
+            return { data: formattedPokemon, error: null };
+        })
+        .catch((error) => {
+            return { data: null, error };
+        });
+};
 
-function isFavorite(id) {
-    const favs = readFavorites();
-    return favs.includes(String(id));
-}
 
-function toggleFavorite(id) {
-    const strId = String(id);
-    const favs = readFavorites();
 
-    const next = favs.includes(strId)
-        ? favs.filter((x) => x !== strId)
-        : [...favs, strId];
-
-    writeFavorites(next);
-    return next;
-}
 function renderSingleItem(pokemon) {
     console.log('render single item')
     const container = document.getElementById("single-item-container");
@@ -140,6 +128,27 @@ pokemonList?.addEventListener("click", async (event) => {
     }
 
     renderSingleItem(result.data);
+});
+
+const form = document.getElementById("pokemon-form");
+
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const nameInput = document.getElementById("pokemon-name");
+    const levelInput = document.getElementById("pokemon-level");
+
+    const name = nameInput.value;
+    const level = levelInput.value;
+
+    const formData = {
+        name,
+        level,
+    };
+
+    console.log(formData); // For now, just log it
+
+    form.reset(); //Clear the form
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
