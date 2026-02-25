@@ -1,128 +1,184 @@
+import "./style.css";
+import { getAllPokemon, getPokemonById } from "./api.js";
 
-export const getAllPokemon = () => {
-    return fetch('https://pokeapi.co/api/v2/pokemon?limit=100')
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Fetch failed. ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
+let allPokemonData = [];
+let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
-            const formattedPokemon = data.results.map((pokemon) => {
-                const urlParts = pokemon.url.split("/");
-                const id = urlParts[urlParts.length - 2];
-
-                return {
-                    name: pokemon.name,
-                    id: id
-                };
-            });
-
-            return { data: formattedPokemon, error: null };
-        })
-        .catch((error) => {
-            return { data: null, error };
-        });
-};
-
-
-
+// ---------------------------
+// RENDER SINGLE POKEMON DETAILS
+// ---------------------------
 function renderSingleItem(pokemon) {
-    console.log('render single item')
     const container = document.getElementById("single-item-container");
-
     container.innerHTML = "";
 
-    const card = document.createElement("div");
-    card.classList.add("card");
-    card.innerHTML = ""; // Add space
+    const li = document.createElement("li");
+    li.classList.add("card");
 
-    const h2 = document.createElement('h2');
+    const h2 = document.createElement("h2");
     h2.textContent = pokemon.name;
 
-    const img = document.createElement('img');
+    const img = document.createElement("img");
     img.src = pokemon.sprites.front_default;
-    img.alt = `${pokemon.name}`;
+    img.alt = pokemon.name;
 
-    const heightP = document.createElement('p');
-    heightP.textContent = "Height: " + pokemon.height
+    const heightP = document.createElement("p");
+    heightP.textContent = `Height: ${pokemon.height}`;
 
-    const weightP = document.createElement('p');
-    weightP.textContent = "Weight: " + pokemon.weight
+    const weightP = document.createElement("p");
+    weightP.textContent = `Weight: ${pokemon.weight}`;
 
-    card.appendChild(h2);
-    card.appendChild(img);
-    card.appendChild(heightP);
-    card.appendChild(weightP);
-
-    container.appendChild(card);
+    li.append(h2, img, heightP, weightP);
+    container.appendChild(li);
 }
 
-function renderPokemonList(pokemonArray) {
-    const pokemonList = document.querySelector("#pokemon-list");
+// ---------------------------
+// RENDER POKEMON LIST
+// ---------------------------
+export const renderPokemonList = (pokemonArray) => {
+    const pokemonList = document.getElementById("pokemon-list");
     pokemonList.innerHTML = "";
 
     pokemonArray.forEach((pokemon) => {
         const li = document.createElement("li");
         li.classList.add("pokemon-item");
         li.dataset.id = pokemon.id;
-        li.textContent = `#${pokemon.id} - ${pokemon.name}`;
 
+        const imageDiv = document.createElement("div");
+        imageDiv.classList.add("card-image");
+
+        const img = document.createElement("img");
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
+        img.alt = pokemon.name;
+
+        imageDiv.appendChild(img);
+
+        const name = document.createElement("h3");
+        name.textContent = pokemon.name;
+
+        // ⭐ Favorite button
+        const favBtn = document.createElement("button");
+        favBtn.textContent = "⭐";
+        favBtn.classList.add("fav-btn");
+        favBtn.addEventListener("click", (e) => {
+            e.stopPropagation(); // prevent opening details
+            if (!favorites.find(p => p.id === pokemon.id)) {
+                favorites.push(pokemon);
+                localStorage.setItem("favorites", JSON.stringify(favorites));
+                renderFavorites(); // immediate UI update
+            }
+            if (favorites.find(p => p.id === pokemon.id)) {
+                favBtn.style.opacity = "0.5";
+            }
+        });
+
+        li.append(imageDiv, name, favBtn);
         pokemonList.appendChild(li);
     });
 }
 
-const pokemonList = document.querySelector("#pokemon-list");
+// ---------------------------
+// FAVORITES LOGIC
+// ---------------------------
+const viewFavoritesBtn = document.getElementById("view-favorites-btn");
+const backToPokedexBtn = document.getElementById("back-to-pokedex-btn");
+const favoritesSection = document.getElementById("favorites-section");
+const mainPokedexSection = document.getElementById("all-pokemon-section");
+const favoritesListEl = document.getElementById("favorites-list");
+const favoritesDetailEl = document.getElementById("favorites-detail");
 
-pokemonList.addEventListener("click", async (event) => {
-    const clickedItem = event.target.closest(".pokemon-item");
-    if (!clickedItem) return;
+function renderFavorites() {
+    favoritesListEl.innerHTML = "";
+    favorites.forEach((pokemon) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png" width="40" />
+    <span>${pokemon.name}</span>
+  </div>
+`;
+        li.addEventListener("click", async () => {
+            const result = await getPokemonById(pokemon.id);
+            if (result.error) return console.warn(result.error);
+            showFavoriteDetail(result.data);
+        });
+        favoritesListEl.appendChild(li);
+    });
+}
 
-    const id = clickedItem.dataset.id;
+function showFavoriteDetail(pokemon) {
+    favoritesDetailEl.innerHTML = `
+        <h2>${pokemon.name}</h2>
+        <p>ID: ${pokemon.id}</p>
+        <p>Level: ${pokemon.level || "N/A"}</p>
+         <img src="${pokemon.sprites.other["official-artwork"].front_default}" width="200"/>
+    <p><strong>Type:</strong> ${pokemon.types.map(t => t.type.name).join(", ")}</p>
+    `;
+}
 
-    const result = await getPokemonById(id);
-
-    if (result.error) {
-        console.warn(result.error);
-        return;
-    }
-
-    renderSingleItem(result.data);
+// ---------------------------
+// VIEW TOGGLE
+// ---------------------------
+viewFavoritesBtn.addEventListener("click", () => {
+    mainPokedexSection.style.display = "none";
+    favoritesSection.style.display = "grid";
+    viewFavoritesBtn.style.display = "none";
+    backToPokedexBtn.style.display = "inline-block";
+    renderFavorites();
 });
 
-const form = document.getElementById("pokemon-form");
-
-form.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const nameInput = document.getElementById("pokemon-name");
-    const levelInput = document.getElementById("pokemon-level");
-
-    const name = nameInput.value;
-    const level = levelInput.value;
-
-    const formData = {
-        name,
-        level,
-    };
-
-    console.log(formData); // For now, just log it
-
-    form.reset(); //Clear the form
+backToPokedexBtn.addEventListener("click", () => {
+    favoritesSection.style.display = "none";
+    mainPokedexSection.style.display = "block";
+    viewFavoritesBtn.style.display = "inline-block";
+    backToPokedexBtn.style.display = "none";
 });
 
+// ---------------------------
+// DOM CONTENT LOADED
+// ---------------------------
 document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        const result = await getAllPokemon();
+    const pokemonList = document.getElementById("pokemon-list");
+    const searchInput = document.getElementById("pokemon-search");
 
-        if (result.error) {
-            console.warn(result.error);
-            return;
+    // Click Event (Event Delegation)
+    pokemonList.addEventListener("click", async (event) => {
+        const clickedItem = event.target.closest(".pokemon-item");
+        if (!clickedItem) return;
+
+        const id = clickedItem.dataset.id;
+        const result = await getPokemonById(id);
+        if (result.error) return console.warn(result.error);
+
+        renderSingleItem(result.data);
+    });
+
+    // Fetch All Pokémon
+
+    async function init() {
+        try {
+            const result = await getAllPokemon();
+
+            if (result.error) {
+                console.warn(result.error);
+                return;
+            }
+
+            allPokemonData = result.data;
+            renderPokemonList(allPokemonData); // THIS MUST RUN
+        } catch (error) {
+            console.error("Error fetching Pokémon:", error);
         }
-
-        renderPokemonList(result.data);
-    } catch (error) {
-        console.error("Error fetching Pokémon:", error);
     }
+
+    init();
+
+    // Live Search
+    searchInput.addEventListener("input", (event) => {
+        const query = event.target.value.toLowerCase();
+        const filteredPokemon = allPokemonData.filter(p =>
+            p.name.toLowerCase().includes(query)
+        );
+        renderPokemonList(filteredPokemon);
+    });
 });
+
