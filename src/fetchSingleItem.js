@@ -13,16 +13,17 @@ export const getPokemonById = async (id) => {
             data: {
                 name: data.name,
                 sprites: data.sprites
-            },
-            error: null
-        };
+                description: data.{ NAME_HERE }
+    },
+    error: null
+};
 
     } catch (error) {
-        console.warn("Error fetching Pokémon:", error);
+    console.warn("Error fetching Pokémon:", error);
 
-        return {
-            data: null,
-            error
-        };
-    }
+    return {
+        data: null,
+        error
+    };
+}
 };
