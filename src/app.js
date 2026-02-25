@@ -1,4 +1,33 @@
-import { getAllPokemon, getPokemonById } from "./api.js";
+
+export const getAllPokemon = () => {
+    return fetch('https://pokeapi.co/api/v2/pokemon?limit=100')
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Fetch failed. ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+
+            const formattedPokemon = data.results.map((pokemon) => {
+                const urlParts = pokemon.url.split("/");
+                const id = urlParts[urlParts.length - 2];
+
+                return {
+                    name: pokemon.name,
+                    id: id
+                };
+            });
+
+            return { data: formattedPokemon, error: null };
+        })
+        .catch((error) => {
+            return { data: null, error };
+        });
+};
+
+
+
 function renderSingleItem(pokemon) {
     console.log('render single item')
     const container = document.getElementById("single-item-container");
@@ -60,6 +89,27 @@ pokemonList.addEventListener("click", async (event) => {
     }
 
     renderSingleItem(result.data);
+});
+
+const form = document.getElementById("pokemon-form");
+
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const nameInput = document.getElementById("pokemon-name");
+    const levelInput = document.getElementById("pokemon-level");
+
+    const name = nameInput.value;
+    const level = levelInput.value;
+
+    const formData = {
+        name,
+        level,
+    };
+
+    console.log(formData); // For now, just log it
+
+    form.reset(); //Clear the form
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
