@@ -5,7 +5,7 @@ let allPokemonData = [];
 let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
 // ---------------------------
-// RENDER SINGLE POKEMON DETAILS
+// RENDER A SINGLE POKEMON DETAILS
 // ---------------------------
 function renderSingleItem(pokemon) {
     const container = document.getElementById("single-item-container");
