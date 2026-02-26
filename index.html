@@ -1,0 +1,71 @@
+<script type="module" crossorigin src="/assets/index-D7e7ZAu3.js"></script>
+<link rel="stylesheet" crossorigin href="/assets/index-CrFyMia7.css">
+<main class="app-layout">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <h1>Pokemon Explorer</h1>
+    <div class="top-buttons">
+      <button id="view-favorites-btn">View Favorites</button>
+      <button id="back-to-pokedex-btn" style="display:none;">Back to Pokedex</button>
+    </div>
+  </header>
+
+  <!-- DASHBOARD TOP AREA -->
+  <section class="dashboard-top">
+
+    <!-- LEFT SIDE: Search + Form -->
+    <div class="left-controls">
+
+      <input type="text" id="pokemon-search" placeholder="Search Pokemon..." />
+
+      <form id="pokemon-form">
+        <div class="form-group">
+          <label for="pokemon-name">Pokemon Name:</label>
+          <input type="text" id="pokemon-name" required />
+        </div>
+
+        <div class="form-group">
+          <label for="pokemon-level">Level:</label>
+          <input type="number" id="pokemon-level" />
+        </div>
+
+        <button type="submit">Add Pokemon</button>
+      </form>
+
+    </div>
+
+    <!-- RIGHT SIDE: Single Pokemon Details -->
+    <div class="right-panel">
+      <section id="single-item-section">
+        <h2>Pokedex Entry</h2>
+        <div id="single-item-container" class="single-item-container"></div>
+      </section>
+    </div>
+
+  </section>
+
+  <!-- MAIN GRID -->
+  <section id="all-pokemon-section">
+    <h2>All Pokemon</h2>
+    <div class="pokedex-scroll">
+      <ul id="pokemon-list"></ul>
+    </div>
+  </section>
+
+  <!-- FAVORITES VIEW -->
+  <section id="favorites-section" class="favorites-layout" style="display: none;">
+    <aside class="favorites-sidebar">
+      <h2>Favorites</h2>
+      <ul id="favorites-list"></ul>
+    </aside>
+
+    <main class="favorites-main">
+      <h1>Pokemon Details</h1>
+      <div id="favorites-detail">
+        <p>Select a favorite Pokemon.</p>
+      </div>
+    </main>
+  </section>
+
+</main>
