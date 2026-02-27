@@ -38,3 +38,5 @@ npm run dev
 ```
 
 ***Tech Stack:*** JavaScript (ES6+), HTML5, CSS3, Vite (Development server & bundler), RESTful API (PokéAPI)
+
+AI Document: https://docs.google.com/document/d/1MY8MML6coiJgbHBnsAXA_pe6SGIiFoV5m8URtIZiaM4/edit?tab=t.0
